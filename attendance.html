@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #360033, #0b8793);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .attendance-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex; /* Add flexbox to center video */
+            flex-direction: column; /* Ensure elements stack vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .attendance-container h2 {
+            margin-bottom: 30px;
+        }
+
+        #video {
+            display: none;
+            width: 300px;
+            height: 225px;
+            border: 1px solid #fff;
+            margin-bottom: 20px;
+        }
+
+        .scan-button {
+            padding: 15px 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .scan-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #attendance-message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #4CAF50;
+        }
+
+        #canvas {
+            display: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+    <div class="attendance-container">
+        <h2>Mark Attendance</h2>
+        <video id="video"></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <button class="scan-button" onclick="startScan()">Scan QR Code</button>
+        <div id="attendance-message"></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const canvasContext = canvas.getContext('2d');
+        const attendanceMessage = document.getElementById('attendance-message');
+
+        function startScan() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    video.play();
+                    requestAnimationFrame(scan);
+                })
+                .catch(error => {
+                    console.error('Error accessing camera:', error);
+                    attendanceMessage.textContent = 'Camera access denied or unavailable.';
+                });
+        }
+
+        function scan() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code) {
+                    video.pause();
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                    video.style.display = 'none';
+                    attendanceMessage.textContent = "Today's attendance marked present.";
+                } else {
+                    requestAnimationFrame(scan);
+                }
+            } else {
+                requestAnimationFrame(scan);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #360033, #0b8793);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            margin-bottom: 20px;
+        }
+
+        .card a {
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1> Welcome! Shrawani Wankhede</h1>
+        <a href="login.html">→ Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <img src="qr.png" alt="Attendacne Icon">
+            <h2>Mark Attendance</h2>
+            <p>Scan QR code to mark your attendance</p>
+            <a href="attendance.html">Access mark attendance ></a> 
+        </div>
+
+        <div class="card">
+            <img src="calendar-lines-pen.png" alt="Timetable Icon">
+            <h2>Time Table</h2>
+            <p>View your weekly schedule</p>
+            <a href="timetable.html">Access time table ></a> 
+        </div>
+
+        <div class="card">
+            <img src="layout-fluid.png" alt="Dashboard Icon">
+            <h2>Dashboard</h2>
+            <p>View your attendance statistics</p>
+            <a href="dashboard.html">Access dashboard ></a> 
+        </div>
+
+        <div class="card">
+            <img src="user.png" alt="Profile Icon">
+            <h2>Profile</h2>
+            <p>Manage your student profile</p>
+            <a href="profile.html">Access profile ></a> 
+        </div>
+    </div>
+</body>
+</html>

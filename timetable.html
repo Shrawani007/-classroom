@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #360033, #0b8793);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timetable-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 900px;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 100px; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 15px;
+            text-align: center; 
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .subject-names {
+            margin-top: 20px;
+            text-align: left; 
+        }
+
+        .subject-names div {
+            margin-bottom: 5px;
+        }
+        .new-table {
+            margin-top: 40px;
+        }
+
+        .new-table td {
+            text-align: left; /* Align the text to the left */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="timetable-container">
+        <h2>Weekly Timetable</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>8:30 - 10:00</th>
+                    <th>10:00 - 11:30</th>
+                    <th>12:00 - 1:00</th>
+                    <th>1:00 - 2:00</th>
+                    <th>2:00 - 3:00</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Monday</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>Networking</td>
+                    <td>CPP</td>
+                    <td>OS</td>
+                </tr>
+                <tr>
+                    <td>Tuesday</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>CPP</td>
+                    <td>JQuery</td>
+                    <td>Adv. PHP</td>
+                </tr>
+                <tr>
+                    <td>Wednesday</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>OS</td>
+                    <td>Adv. PHP</td>
+                    <td>Project B1</td>
+                </tr>
+                <tr>
+                    <td>Thursday</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>OS</td>
+                    <td>Networking</td>
+                    <td>Project B2</td>
+                </tr>
+                <tr>
+                    <td>Friday</td>
+                    <td>B1 Pract. B2 Pract.</td>
+                    <td>B2 Pract. B1 Pract.</td>
+                    <td>Adv. PHP</td>
+                    <td>CPP</td>
+                    <td>Project B3</td>
+                </tr>
+                <tr>
+                    <td>Saturday</td>
+                    <td>B3 Pract. B4 Pract</td>
+                    <td>B4 Pract. B3 Pract.</td>
+                    <td>Networking</td>
+                    <td>JQuery</td>
+                    <td>Project B4</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="new-table"> <div class="new-table">
+            <tbody>
+              <tr>
+                <td>CA-401 Networking</td>
+                <td>Dr. Vishal Langaliya</td>
+              </tr>
+              <tr>
+                <td>CA-402 CPP</td>
+                <td>Mr. Imtiyaz Padarshi</td>
+              </tr>
+              <tr>
+                <td>CA-403 Operating System</td>
+                <td>Ms. Kavita Saptasagar</td>
+              </tr>
+              <tr>
+                <td>CA-404 Advance PHP</td>
+                <td>Mrs. Jinil Jacob</td>
+              </tr>
+              <tr>
+                <td>CA-405 Project</td>
+                <td>Mr. Imtiyaz Padarshi</td>
+              </tr>
+              <tr>
+                <td>CA-406 Computer Lab Based on 402, 404</td>
+                <td>Mr. Imtiyaz Padarshi & Mrs. Jinil Jacob</td>
+              </tr>
+              <tr>
+                <td>4 JQuery</td>
+                <td>Dr. Vishal Langaliya</td>
+              </tr>
+            </tbody>
+          </table>
+              </div>
+          </body>
+          </html>
