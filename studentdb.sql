@@ -55,7 +55,4 @@ SET SQL_SAFE_UPDATES = 0;
 
 
 -- Sample Data for `attendance`
-INSERT INTO attendance (student_id, date, status)
 
-VALUES 
-('STU001', CURDATE(), 'Present');
