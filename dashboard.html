@@ -9,7 +9,7 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #360033, #0b8793); /* Same as previous pages */
+            background: linear-gradient(135deg, #360033, #0b8793);
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -40,7 +40,7 @@
         }
 
         .dashboard-card {
-            background-color: rgba(255, 255, 255, 0.1); /* Same as previous pages */
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 20px;
         }
@@ -65,11 +65,11 @@
         }
 
         .attendance-percent.present {
-            color: #4CAF50; /* Green */
+            color: #4CAF50;
         }
 
         .attendance-percent.absent {
-            color: #f44336; /* Red */
+            color: #f44336;
         }
 
         .schedule-list {
@@ -81,7 +81,7 @@
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Same as previous pages */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .recent-attendance-table {
@@ -92,7 +92,7 @@
         .recent-attendance-table th, .recent-attendance-table td {
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Same as previous pages */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .recent-attendance-table th {
@@ -100,11 +100,11 @@
         }
 
         .status-present {
-            color: #4CAF50; /* Green */
+            color: #4CAF50;
         }
 
         .status-absent {
-            color: #f44336; /* Red */
+            color: #f44336;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -113,8 +113,9 @@
 <body>
     <div class="dashboard-container">
         <div class="dashboard-header">
-            <h1>Student Dashboard</h1>
+            <h1 id="student-name">Student Dashboard</h1>
         </div>
+
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <div class="card-title">
@@ -124,14 +125,15 @@
                 <div class="attendance-overview">
                     <div class="attendance-percent present">
                         <p>Present</p>
-                        <p>85%</p>
+                        <p id="present-percent">Loading...</p>
                     </div>
                     <div class="attendance-percent absent">
                         <p>Absent</p>
-                        <p>15%</p>
+                        <p id="absent-percent">Loading...</p>
                     </div>
                 </div>
             </div>
+
             <div class="dashboard-card">
                 <div class="card-title">
                     <i class="fas fa-clock"></i>
@@ -141,12 +143,13 @@
                 </ul>
             </div>
         </div>
+
         <div class="dashboard-card">
             <div class="card-title">
                 <i class="fas fa-history"></i>
                 <h2>Recent Attendance</h2>
             </div>
-            <table class="recent-attendance-table">
+            <table class="recent-attendance-table" id="attendanceTable">
                 <thead>
                     <tr>
                         <th>SUBJECT</th>
@@ -155,84 +158,102 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>OS</td>
-                        <td>5/3/2025</td>
-                        <td class="status-absent"><i class="fas fa-times-circle"></i> Absent</td>
-                    </tr>
-                    <tr>
-                        <td>Adv PHP</td>
-                        <td>5/3/2025</td>
-                        <td class="status-present"><i class="fas fa-check-circle"></i> Present</td>
-                    </tr>
-                    <tr>
-                        <td>OS</td>
-                        <td>6/3/2025</td>
-                        <td class="status-absent"><i class="fas fa-times-circle"></i> Absent</td>
-                    </tr>
-                    <tr>
-                        <td>Networking</td>
-                        <td>6/3/2025</td>
-                        <td class="status-present"><i class="fas fa-check-circle"></i> Present</td>
-                    </tr>
+                    <!-- Dynamic Attendance Data Will Be Inserted Here -->
                 </tbody>
             </table>
         </div>
 
     <script>
-        // Function to fetch and display today's schedule from timetable.html
+        // 🔹 Load Student Data for Dashboard
+        async function loadStudentDashboard() {
+            try {
+                const response = await fetch('/student-data');
+                const student = await response.json();
+
+                if (student) {
+                    document.getElementById('student-name').innerText = `${student.name}'s Dashboard`;
+
+                    // Attendance Overview
+                    const totalClasses = student.total_classes || 100; // Default total classes
+                    const presentCount = student.present_count || 85; // Default if no data
+                    const absentCount = totalClasses - presentCount;
+
+                    const presentPercent = ((presentCount / totalClasses) * 100).toFixed(1);
+                    const absentPercent = ((absentCount / totalClasses) * 100).toFixed(1);
+
+                    document.getElementById('present-percent').innerText = `${presentPercent}%`;
+                    document.getElementById('absent-percent').innerText = `${absentPercent}%`;
+
+                    // Recent Attendance Records
+                    const attendanceTable = document.getElementById('attendanceTable').querySelector('tbody');
+                    attendanceTable.innerHTML = ''; // Clear existing data
+
+                    if (student.recent_attendance) {
+                        student.recent_attendance.forEach(record => {
+                            const row = `
+                                <tr>
+                                    <td>${record.subject}</td>
+                                    <td>${record.date}</td>
+                                    <td class="${record.status === 'Present' ? 'status-present' : 'status-absent'}">
+                                        <i class="fas ${record.status === 'Present' ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
+                                        ${record.status}
+                                    </td>
+                                </tr>
+                            `;
+                            attendanceTable.innerHTML += row;
+                        });
+                    } else {
+                        attendanceTable.innerHTML = `<tr><td colspan="3">No recent attendance data available.</td></tr>`;
+                    }
+                } else {
+                    alert('❌ Error fetching student data.');
+                }
+            } catch (error) {
+                console.error('❌ Error loading dashboard data:', error);
+                alert('❌ Error loading data.');
+            }
+        }
+
+        // 🔹 Load Today's Schedule
         function fetchSchedule() {
             const now = new Date();
-            const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+            const dayOfWeek = now.getDay();
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const today = days[dayOfWeek];
 
-            // Fetch timetable.html
             fetch('timetable.html')
                 .then(response => response.text())
                 .then(html => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
-                    const table = doc.querySelector('table');
-                    const rows = table.querySelectorAll('tbody tr');
+                    const rows = doc.querySelectorAll('tbody tr');
 
-                    // Find the row for today
-                    let todayRow = null;
+                    const scheduleList = document.getElementById('scheduleList');
+                    scheduleList.innerHTML = '';  // Clear old data
+
                     for (const row of rows) {
                         const dayCell = row.querySelector('td:first-child');
                         if (dayCell.textContent === today) {
-                            todayRow = row;
-                            break;
-                        }
-                    }
-
-                    if (todayRow) {
-                        const scheduleList = document.getElementById('scheduleList');
-                        const cells = todayRow.querySelectorAll('td');
-
-                        // Skip the first cell (day)
-                        for (let i = 1; i < cells.length; i++) {
-                            const subject = cells[i].textContent;
-                            if (subject !== '-') {
-                                const time = table.querySelectorAll('th')[i].textContent;
-                                const listItem = document.createElement('li');
-                                listItem.classList.add('schedule-item');
-                                listItem.innerHTML = `
-                                    <span>${subject}</span>
-                                    <span>${time}</span>
-                                `;
-                                scheduleList.appendChild(listItem);
+                            const cells = row.querySelectorAll('td');
+                            for (let i = 1; i < cells.length; i++) {
+                                if (cells[i].textContent.trim() !== '-') {
+                                    const time = doc.querySelectorAll('th')[i].textContent;
+                                    scheduleList.innerHTML += `<li class="schedule-item">
+                                        <span>${cells[i].textContent}</span>
+                                        <span>${time}</span>
+                                    </li>`;
+                                }
                             }
                         }
-                    } else {
-                        console.log('No schedule found for today.');
                     }
                 })
                 .catch(error => console.error('Error fetching timetable:', error));
         }
 
-        // Call the function to fetch and display the schedule
-        fetchSchedule();
+        window.onload = () => {
+            loadStudentDashboard();
+            fetchSchedule();
+        };
     </script>
 </body>
 </html>
