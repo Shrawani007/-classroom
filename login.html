@@ -12,12 +12,12 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #360033, #0b8793); /* Gradient background */
-            color: #333; /* Dark text */
+            background: linear-gradient(135deg, #360033, #0b8793);
+            color: #333;
         }
 
         .login-container {
-            background-color: #ffffff; /* Solid white */
+            background-color: #ffffff;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -32,11 +32,10 @@
             font-weight: 600;
         }
 
-        /* Add styles for the logo */
         .logo {
-            width: 50px; /* Adjust width as needed */
-            height: auto; /* Maintain aspect ratio */
-            margin-bottom: 20px; /* Add space below the logo */
+            width: 50px;
+            height: auto;
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -54,11 +53,11 @@
         .form-group input {
             width: calc(100% - 22px);
             padding: 12px;
-            border: 1px solid #ddd; /* Light gray border */
+            border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
             transition: border-color 0.3s ease;
-            background-color: #fff; /* Solid white input background */
+            background-color: #fff;
             color: #333;
         }
 
@@ -67,11 +66,10 @@
             border-color: #3498db;
         }
 
-
         .form-group button {
             width: 100%;
             padding: 14px;
-            background-color: #3498db; /* Blue button color */
+            background-color: #3498db;
             color: white;
             border: none;
             border-radius: 6px;
@@ -96,37 +94,52 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="student.png" alt="Your Logo" class="logo"> 
+        <img src="student.png" alt="Your Logo" class="logo">
         <h2>Student Login</h2>
-        <div class="form-group">
-            <label for="studentId">Student ID</label>
-            <input type="text" id="studentId" name="studentId" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <button onclick="login()">Login</button>
-        </div>
-        <div id="error" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="studentId" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+
+        <div id="error" class="error-message"></div> <!-- Error message container -->
     </div>
 
     <script>
-        function login() {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
             const studentId = document.getElementById('studentId').value;
             const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('error');
 
-            // Replace with your actual authentication logic
-            if (studentId === '12345' && password === 'password123') {
-                // Successful login, redirect to next page
-                window.location.href = 'home.html'; // Replace with your next page URL
-            } else {
-                // Incorrect credentials, display error message
-                errorDiv.textContent = 'Incorrect Student ID or Password.';
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }, // Send JSON data
+                    body: JSON.stringify({ studentId, password }) // Convert data to JSON
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = result.redirect; // Redirect to home page
+                } else {
+                    document.getElementById('error').textContent = result.message; // Display error message
+                }
+            } catch (error) {
+                console.error('❌ Error during login:', error);
+                document.getElementById('error').textContent = 'An error occurred. Please try again.'; // Display network error
             }
-        }
+        });
     </script>
 </body>
 </html>
