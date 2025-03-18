@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #360033, #0b8793); /* Blue-purple gradient */
+            background: linear-gradient(135deg, #360033, #0b8793);
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -18,12 +19,12 @@
         }
 
         .profile-card {
-            background: linear-gradient(135deg, #360033, #0b8793); /* Blue-purple gradient */
+            background: linear-gradient(135deg, #360033, #0b8793);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 500px;
             overflow: hidden;
-            color: #fff; /* White text color for contrast */
+            color: #fff;
         }
 
         .profile-header {
@@ -59,7 +60,7 @@
 
         .profile-details p {
             text-align: center;
-            color: #eee; /* Slightly lighter text color for better readability */
+            color: #eee;
             margin-bottom: 20px;
         }
 
@@ -73,7 +74,7 @@
         .info-item {
             display: flex;
             align-items: center;
-            color: #eee; /* Slightly lighter text color for better readability */
+            color: #eee;
         }
 
         .info-item i {
@@ -82,7 +83,7 @@
         }
 
         .academic-info {
-            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
@@ -96,7 +97,7 @@
         .academic-info p {
             display: flex;
             justify-content: space-between;
-            color: #eee; /* Slightly lighter text color for better readability */
+            color: #eee;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -104,37 +105,66 @@
 <body>
     <div class="profile-card">
         <div class="profile-header">
-            <img src="student_photo.jpg" alt="Student Photo">
+            <img id="student-photo" src="user.png" alt="Student Photo">
         </div>
         <div class="profile-details">
-            <h2>Shrawani Vilas Wankhede</h2>
-            <p>Student ID: STU123456</p>
+            <h2 id="student-name">Loading...</h2>
+            <p id="student-id">Student ID: Loading...</p>
             <div class="info-row">
                 <div class="info-item">
                     <i class="fas fa-envelope"></i>
-                    shrawaniwankhede74@gmail.com
+                    <span id="student-email">Loading...</span>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-building"></i>
-                    B.B.A(C.A)
+                    <span id="student-class">Loading...</span>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-phone"></i>
-                    +91 9104066899
+                    <span id="student-phone">Loading...</span>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    Gurukrupa Recidency, Silvassa
+                    <span id="student-address">Loading...</span>
                 </div>
             </div>
             <div class="academic-info">
                 <h3>Academic Information</h3>
                 <p>
                     <span>Current Semester</span>
-                    <span>4th Semester</span>
+                    <span id="current-semester">Loading...</span>
                 </p>
             </div>
         </div>
     </div>
+
+    <script>
+        async function loadStudentProfile() {
+            try {
+                const response = await fetch('/student-data');
+                const result = await response.json();
+
+                if (result.success) {
+                    const student = result.student;
+                    document.getElementById('student-name').innerText = student.name;
+                    document.getElementById('student-id').innerText = `Student ID: ${student.student_id}`;
+                    document.getElementById('student-email').innerText = student.email;
+                    document.getElementById('student-class').innerText = student.class;
+                    document.getElementById('student-phone').innerText = student.phone;
+                    document.getElementById('student-address').innerText = student.address;
+                    document.getElementById('current-semester').innerText = student.semester;
+
+                    // Display profile photo if available
+                    document.getElementById('student-photo').src = student.profile_image || 'user.png';
+                } else {
+                    alert(result.message); // Display error message
+                }
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
+        }
+
+        window.onload = loadStudentProfile;
+    </script>
 </body>
 </html>
