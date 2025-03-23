@@ -99,13 +99,14 @@
             justify-content: space-between;
             color: #eee;
         }
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="profile-card">
         <div class="profile-header">
-            <img id="student-photo" src="user.png" alt="Student Photo">
+            <img id="student-photo" alt="Student Photo">
         </div>
         <div class="profile-details">
             <h2 id="student-name">Loading...</h2>
@@ -155,7 +156,13 @@
                     document.getElementById('current-semester').innerText = student.semester;
 
                     // Display profile photo if available
-                    document.getElementById('student-photo').src = student.profile_image || 'user.png';
+                    const profilePhoto = document.getElementById('student-photo');
+                    if (student.profile_image) {
+                        profilePhoto.src = student.profile_image; // Set the profile photo URL
+                        console.log('Profile Image URL:', student.profile_image); // Log the profile image URL
+                    } else {
+                        console.log('No profile image found'); // Log if no profile image is available
+                    }
                 } else {
                     alert(result.message); // Display error message
                 }
@@ -168,3 +175,4 @@
     </script>
 </body>
 </html>
+
