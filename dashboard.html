@@ -140,7 +140,6 @@
                     <h2>Today's Schedule</h2>
                 </div>
                 <ul class="schedule-list" id="scheduleList">
-                    <!-- Hardcoded Today's Schedule -->
                     <li class="schedule-item">
                         <span>Networking</span>
                         <span>12:00 - 1:00</span>
@@ -160,30 +159,41 @@
         <div class="dashboard-card">
             <div class="card-title">
                 <i class="fas fa-history"></i>
-                <h2>Recent Attendance</h2>
+                <h2>Last 7 Days Attendance</h2>
             </div>
             <table class="recent-attendance-table" id="attendanceTable">
                 <thead>
                     <tr>
-                        <th>SUBJECT</th>
                         <th>DATE</th>
                         <th>STATUS</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Hardcoded Recent Attendance Data -->
                     <tr>
-                        <td>Networking</td>
+                        <td>2025-03-26 (Today)</td>
+                        <td class="status-present">Present</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-25</td>
+                        <td class="status-present">Present</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-24</td>
+                        <td class="status-absent">Absent</td>
+                    </tr>
+                    <tr>
+                        <td>2025-03-23</td>
+                        <td class="status-present">Present</td>
+                    </tr>
+                    <tr>
                         <td>2025-03-22</td>
                         <td class="status-present">Present</td>
                     </tr>
                     <tr>
-                        <td>CPP</td>
                         <td>2025-03-21</td>
                         <td class="status-absent">Absent</td>
                     </tr>
                     <tr>
-                        <td>OS</td>
                         <td>2025-03-20</td>
                         <td class="status-present">Present</td>
                     </tr>
