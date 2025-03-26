@@ -1,95 +1,208 @@
--- Create Database
-CREATE DATABASE stud_profile;
+const express = require('express');
+const mysql = require('mysql2');
+const path = require('path');
+const session = require('express-session');
+const multer = require('multer'); // For handling file uploads
+const cloudinary = require('cloudinary').v2; // For Cloudinary integration
+const fs = require('fs'); // For file system operations
+const app = express();
+const port = 3000;
 
--- Use the Database
-USE stud_profile;
+// Database Connection
+const db = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: '', // Replace with your MySQL password
+    database: 'stud_profile' // Replace with your database name
+});
 
--- Create `students` Table
-CREATE TABLE students (
-    student_id VARCHAR(10) PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100),
-    password VARCHAR(255),
-    profile_image VARCHAR(255),
-    phone VARCHAR(15),
-    address VARCHAR(200),
-    semester VARCHAR(10)
-);
+db.connect(err => {
+    if (err) {
+        console.error('❌ Database connection failed: ' + err.stack);
+        return;
+    }
+    console.log('✅ Connected to MySQL database');
+});
 
--- Sample Data for `students`
-INSERT INTO students (student_id, name, email, password, profile_image, phone, address, class)
-VALUES
-('STU101', 'Shrawani Wankhede', 'shrawaniwankhede74@gmail.com', 'shra2005', '+91 9104066899', 'Gurukrupa Recidency, Silvassa', 'SY BBA(CA)'),
-('STU102', 'Neha Yadav', 'neha.yadav@gmail.com', 'neha2005', '+91 9876543210', 'Yashoda Apartments, Silvassa', '4th Semester'),
-('STU103', 'Vruti Lad', 'vruti.lad@gmail.com', 'vrut2005','+91 7788990011', 'Silver Crest, Silvassa', '4th Semester'),
-('STU104', 'Vinita Shrimali', 'vinita.shrimali@gmail.com', 'vini2005','+91 9900765432', 'Orchid Residency, Silvassa', '4th Semester'),
-('STU105', 'Ayush Yadav', 'ayush.yadav@gmail.com', 'ayus2006','+91 8076543210', 'Maple Residency, Silvassa', '4th Semester'),
-('STU106', 'Pallavi Omprakash', 'pallavi.om@gmail.com', 'pall2005','+91 9098765432', 'Harmony Heights, Silvassa', '4th Semester'),
-('STU107', 'Pratik Mishra', 'pratik.mishra@gmail.com', 'prat2005','+91 7065987412', 'Royal Apartments, Vapi', '4th Semester'),
-('STU108', 'Rohan Guleria', 'rohan.guleria@gmail.com', 'roha2005','+91 6074569823', 'Maple Residency, Silvassa', '4th Semester'),
-('STU109', 'Priyadarshan Bhaskar Bodade', 'darshan.bodade@gmail.com', 'dars2004','+91 9512534211', 'Yashodham,Umbergaon', '4th Semester'),
-('STU110', 'Harsh Prakash Mangela', 'harsh.mangela@gmail.com', 'hars2004','+91 9632587412', 'Sai Residency, Silvassa', '4th Semester');
+// Cloudinary Configuration
+cloudinary.config({
+    cloud_name: 'dlnqhdxfj ', // Replace with your Cloudinary cloud name
+    api_key: '281576885953584',      // Replace with your Cloudinary API key
+    api_secret: 'da91U0IofxCymRHl0zmY6jUEK7c' // Replace with your Cloudinary API secret
+});
 
-ALTER TABLE students
-CHANGE COLUMN semester class VARCHAR(50);
-UPDATE students
-SET class = 'SY BBA(CA)';
-ALTER TABLE students
-ADD COLUMN semester VARCHAR(20) AFTER class;
-UPDATE students
-SET semester = '4th Semester';
+// Middleware
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files (HTML, CSS, JS, images)
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(express.json()); // Parse JSON bodies
+app.use(session({
+    secret: 'da91U0IofxCymRHl0zmY6jUEK7c', // Replace with a strong secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+}));
 
-SELECT student_id, name, class, semester FROM students;
-SET SQL_SAFE_UPDATES = 0;
+//multer configuration for file uploading
+const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
 
+// Login Route
+app.post('/login', (req, res) => {
+    const { studentId, password } = req.body;
 
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582025/students/rgynm0ttghqoodoyp05b.png'
-WHERE student_id = 'STU101';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582036/students/eyhlptbr3xizgugtsti3.png'
-WHERE student_id = 'STU102';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582042/students/oty5cfkcoly2wanjrh0m.png'
-WHERE student_id = 'STU103';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582061/students/xzpswpjzlnzuqbkhrnlg.png'
-WHERE student_id = 'STU104';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582066/students/qaqxtboyv5mvp8q8qr6n.png'
-WHERE student_id = 'STU105';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582081/students/vir9tgzjepxahj8ktl2n.png'
-WHERE student_id = 'STU106';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582084/students/ckl0abs6i16iyikecgrf.png'
-WHERE student_id = 'STU107';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582098/students/gtjhkxzirotwwukviyys.png'
-WHERE student_id = 'STU108';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582101/students/lxi26he2mp2iixms5jw1.png'
-WHERE student_id = 'STU109';
-UPDATE students
-SET profile_image = 'https://res.cloudinary.com/dlnqhdxfj/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1742582104/students/wqzuhsz7wviwpizewbwp.png'
-WHERE student_id = 'STU110';
+    const query = 'SELECT * FROM students WHERE student_id = ? AND password = ?';
+    db.query(query, [studentId, password], (err, results) => {
+        if (err) {
+            console.error('❌ Database query error: ' + err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
 
-UPDATE students
-SET profile_image = NULL;
+        if (results.length > 0) {
+            req.session.student = results[0]; // Store student details in session
+            res.json({ success: true, redirect: '/home.html' }); // Send success response
+        } else {
+            res.status(401).json({ success: false, message: 'Incorrect Student ID or Password' }); // Send error response
+        }
+    });
+});
 
-SELECT student_id, name, profile_image FROM students;
-select* from students;
+// Route to Fetch Student Data
+app.get('/student-data', (req, res) => {
+    if (!req.session.student) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
-USE stud_profile;
-DROP TABLE IF EXISTS attendance;
-CREATE TABLE attendance (
-    attendance_id INT PRIMARY KEY AUTO_INCREMENT,
-    student_id VARCHAR(10),
-    date DATE NOT NULL,
-    status ENUM('Present', 'Absent') DEFAULT 'Absent',
-    FOREIGN KEY (student_id) REFERENCES students(student_id),
-    UNIQUE KEY unique_attendance (student_id, date)
-) ENGINE=InnoDB;
+    const studentId = req.session.student.student_id; // Get student ID from session
+    const query = 'SELECT * FROM students WHERE student_id = ?';
+    db.query(query, [studentId], (err, results) => {
+        if (err) {
+            console.error('❌ Database query error: ' + err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
 
-DESCRIBE attendance;
-select* from attendance;
+        if (results.length > 0) {
+            res.json({ success: true, student: results[0] }); // Send student data
+        } else {
+            res.status(404).json({ success: false, message: 'Student not found' });
+        }
+    });
+});
+
+//upload-photo route
+app.post('/upload-photo', upload.single('photo'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    if (!req.session.student) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        // Upload the file to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'students' // Optional: Organize images in a folder
+        });
+
+        // Update the student's profile image in the database
+        const studentId = req.session.student.student_id;
+        const query = 'UPDATE students SET profile_image = ? WHERE student_id = ?';
+        db.query(query, [result.secure_url, studentId], (err, results) => {
+            if (err) {
+                console.error('❌ Database query error: ' + err);
+                return res.status(500).json({ success: false, message: 'Database error' });
+            }
+
+            // Delete the temporary file after upload
+            fs.unlinkSync(req.file.path);
+
+            res.json({ success: true, imageUrl: result.secure_url });
+        });
+    } catch (error) {
+        console.error('❌ Cloudinary upload error: ' + error);
+        res.status(500).json({ success: false, message: 'Error uploading image' });
+    }
+});
+
+// Add this route to server.js (before app.listen)
+app.post('/attendance/scan-qr', async (req, res) => {
+    if (!req.session.student) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const { scannedData } = req.body;
+    const loggedInStudentId = req.session.student.student_id;
+
+    // Extract student ID from QR code (assuming format is "Student ID:STU101")
+    const qrStudentId = scannedData.split(':')[1]?.trim();
+    
+    if (!qrStudentId) {
+        return res.status(400).json({ success: false, message: 'Invalid QR code format' });
+    }
+
+    // Check if scanned ID matches logged in student
+    if (qrStudentId !== loggedInStudentId) {
+        return res.status(403).json({ success: false, message: 'QR code does not match logged in student' });
+    }
+
+    // Check if attendance already marked today
+    const checkQuery = 'SELECT * FROM attendance WHERE student_id = ? AND date = CURDATE()';
+    db.query(checkQuery, [loggedInStudentId], (err, results) => {
+        if (err) {
+            console.error('❌ Database query error: ' + err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+
+        if (results.length > 0) {
+            return res.json({ success: true, message: 'Attendance already marked today' });
+        }
+
+        // Mark attendance
+        const insertQuery = 'INSERT INTO attendance (student_id, date, status) VALUES (?, CURDATE(), "Present")';
+        db.query(insertQuery, [loggedInStudentId], (err, results) => {
+            if (err) {
+                console.error('❌ Database query error: ' + err);
+                return res.status(500).json({ success: false, message: 'Database error' });
+            }
+
+            res.json({ success: true, message: 'Attendance marked successfully' });
+        });
+    });
+});
+
+// Add this function to mark absent students after 5 minutes
+function markAbsentStudents() {
+    // Get current time minus 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const formattedTime = fiveMinutesAgo.toISOString().slice(0, 19).replace('T', ' ');
+    
+    // Mark students as absent who haven't scanned today
+    const query = `
+        INSERT INTO attendance (student_id, date, status)
+        SELECT student_id, CURDATE(), 'Absent'
+        FROM students
+        WHERE student_id NOT IN (
+            SELECT student_id FROM attendance WHERE date = CURDATE()
+        )
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('❌ Error marking absent students:', err);
+        } else {
+            console.log(`✅ Marked ${results.affectedRows} students as absent`);
+        }
+    });
+}
+
+// Run the absent marking function every 5 minutes
+setInterval(markAbsentStudents, 5 * 60 * 1000);
+
+// Default Route (Redirect to Login Page)
+app.get('/', (req, res) => {
+    res.redirect('/login.html'); // Redirect to login page
+});
+
+// Start the Server
+app.listen(port, () => {
+    console.log(`🚀 Server running at http://localhost:3000`);
+});
