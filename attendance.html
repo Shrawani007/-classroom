@@ -87,7 +87,7 @@
         const canvas = document.getElementById('canvas');
         const canvasContext = canvas.getContext('2d');
         const attendanceMessage = document.getElementById('attendance-message');
-
+    
         function startScan() {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                 .then(stream => {
@@ -99,9 +99,10 @@
                 .catch(error => {
                     console.error('Error accessing camera:', error);
                     attendanceMessage.textContent = 'Camera access denied or unavailable.';
+                    attendanceMessage.style.color = '#f44336'; // Red for error
                 });
         }
-
+    
         function scan() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 canvas.height = video.videoHeight;
@@ -109,12 +110,33 @@
                 canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
-
+    
                 if (code) {
                     video.pause();
                     video.srcObject.getTracks().forEach(track => track.stop());
                     video.style.display = 'none';
-                    attendanceMessage.textContent = "Today's attendance marked present.";
+    
+                    // Send the scanned data to the server
+                    fetch('/attendance/scan-qr', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ scannedData: code.data })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            attendanceMessage.textContent = data.message;
+                            attendanceMessage.style.color = '#4CAF50'; // Green for success
+                        } else {
+                            attendanceMessage.textContent = data.message;
+                            attendanceMessage.style.color = '#f44336'; // Red for error
+                        }
+                    })
+                    .catch(error => {
+                        attendanceMessage.textContent = 'Error marking attendance';
+                        attendanceMessage.style.color = '#f44336'; // Red for error
+                        console.error('Error:', error);
+                    });
                 } else {
                     requestAnimationFrame(scan);
                 }
