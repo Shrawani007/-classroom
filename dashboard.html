@@ -125,11 +125,11 @@
                 <div class="attendance-overview">
                     <div class="attendance-percent present">
                         <p>Present</p>
-                        <p id="present-percent">Loading...</p>
+                        <p id="present-percent">85%</p>
                     </div>
                     <div class="attendance-percent absent">
                         <p>Absent</p>
-                        <p id="absent-percent">Loading...</p>
+                        <p id="absent-percent">15%</p>
                     </div>
                 </div>
             </div>
@@ -140,6 +140,19 @@
                     <h2>Today's Schedule</h2>
                 </div>
                 <ul class="schedule-list" id="scheduleList">
+                    <!-- Hardcoded Today's Schedule -->
+                    <li class="schedule-item">
+                        <span>Networking</span>
+                        <span>12:00 - 1:00</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span>CPP</span>
+                        <span>1:00 - 2:00</span>
+                    </li>
+                    <li class="schedule-item">
+                        <span>OS</span>
+                        <span>2:00 - 3:00</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -158,102 +171,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dynamic Attendance Data Will Be Inserted Here -->
+                    <!-- Hardcoded Recent Attendance Data -->
+                    <tr>
+                        <td>Networking</td>
+                        <td>2025-03-22</td>
+                        <td class="status-present">Present</td>
+                    </tr>
+                    <tr>
+                        <td>CPP</td>
+                        <td>2025-03-21</td>
+                        <td class="status-absent">Absent</td>
+                    </tr>
+                    <tr>
+                        <td>OS</td>
+                        <td>2025-03-20</td>
+                        <td class="status-present">Present</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-
-    <script>
-        // 🔹 Load Student Data for Dashboard
-        async function loadStudentDashboard() {
-            try {
-                const response = await fetch('/student-data');
-                const student = await response.json();
-
-                if (student) {
-                    document.getElementById('student-name').innerText = `${student.name}'s Dashboard`;
-
-                    // Attendance Overview
-                    const totalClasses = student.total_classes || 100; // Default total classes
-                    const presentCount = student.present_count || 85; // Default if no data
-                    const absentCount = totalClasses - presentCount;
-
-                    const presentPercent = ((presentCount / totalClasses) * 100).toFixed(1);
-                    const absentPercent = ((absentCount / totalClasses) * 100).toFixed(1);
-
-                    document.getElementById('present-percent').innerText = `${presentPercent}%`;
-                    document.getElementById('absent-percent').innerText = `${absentPercent}%`;
-
-                    // Recent Attendance Records
-                    const attendanceTable = document.getElementById('attendanceTable').querySelector('tbody');
-                    attendanceTable.innerHTML = ''; // Clear existing data
-
-                    if (student.recent_attendance) {
-                        student.recent_attendance.forEach(record => {
-                            const row = `
-                                <tr>
-                                    <td>${record.subject}</td>
-                                    <td>${record.date}</td>
-                                    <td class="${record.status === 'Present' ? 'status-present' : 'status-absent'}">
-                                        <i class="fas ${record.status === 'Present' ? 'fa-check-circle' : 'fa-times-circle'}"></i> 
-                                        ${record.status}
-                                    </td>
-                                </tr>
-                            `;
-                            attendanceTable.innerHTML += row;
-                        });
-                    } else {
-                        attendanceTable.innerHTML = `<tr><td colspan="3">No recent attendance data available.</td></tr>`;
-                    }
-                } else {
-                    alert('❌ Error fetching student data.');
-                }
-            } catch (error) {
-                console.error('❌ Error loading dashboard data:', error);
-                alert('❌ Error loading data.');
-            }
-        }
-
-        // 🔹 Load Today's Schedule
-        function fetchSchedule() {
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const today = days[dayOfWeek];
-
-            fetch('timetable.html')
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const rows = doc.querySelectorAll('tbody tr');
-
-                    const scheduleList = document.getElementById('scheduleList');
-                    scheduleList.innerHTML = '';  // Clear old data
-
-                    for (const row of rows) {
-                        const dayCell = row.querySelector('td:first-child');
-                        if (dayCell.textContent === today) {
-                            const cells = row.querySelectorAll('td');
-                            for (let i = 1; i < cells.length; i++) {
-                                if (cells[i].textContent.trim() !== '-') {
-                                    const time = doc.querySelectorAll('th')[i].textContent;
-                                    scheduleList.innerHTML += `<li class="schedule-item">
-                                        <span>${cells[i].textContent}</span>
-                                        <span>${time}</span>
-                                    </li>`;
-                                }
-                            }
-                        }
-                    }
-                })
-                .catch(error => console.error('Error fetching timetable:', error));
-        }
-
-        window.onload = () => {
-            loadStudentDashboard();
-            fetchSchedule();
-        };
-    </script>
+    </div>
 </body>
 </html>
